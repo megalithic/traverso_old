@@ -24,7 +24,7 @@ describe PackList do
 	  PackList.create!(@attr)
 	end
 
-	it "should require a title to be required" do
+	it "should require a title to be present" do
 	  no_title_pack_list = PackList.new(@attr.merge(:title => ""))
 		no_title_pack_list.should_not be_valid
 	end

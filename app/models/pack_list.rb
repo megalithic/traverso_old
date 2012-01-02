@@ -16,6 +16,8 @@
 class PackList < ActiveRecord::Base
 	attr_accessible		:title, :is_active, :description, :date_last_used
 
+	has_many :pack_item_categories
+
 	validates :title, :presence => true,
 									 	:length => {:maximum => 100}
 end

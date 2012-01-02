@@ -19,28 +19,13 @@ require 'spec_helper'
 describe User do
 
 	before(:each) do
-		@attr = {:first_name => "Example", :last_name => "User", :email => "user@example.com", :password => "foobar", :password_confirmation => "foobar"}
+		@attr = {:first_name => "Example", :last_name => "User", :username => "exampleuser",  :email => "user@example.com", :password => "foobar", :password_confirmation => "foobar"}
 	end
 
-	it "should create a new instance gien a valid attribute" do
+	it "should create a new instance given a valid attribute" do
 	  User.create!(@attr)
 	end
 	
-	it "should require a first name" do
-	  no_first_name_user = User.new(@attr.merge(:first_name => ""))
-		no_first_name_user.should_not be_valid
-	end
-	
-	it "should require a last name" do
-	  no_last_name_user = User.new(@attr.merge(:last_name => ""))
-		no_last_name_user.should_not be_valid
-	end
-
-	it "should require an email address" do
-	  no_email_user = User.new(@attr.merge(:email => ""))
-		no_email_user.should_not be_valid
-	end
-
 	it "should reject first names that are too long" do
 		long_name = "a" * 51
 		long_name_user = User.new(@attr.merge(:first_name => long_name))
@@ -52,34 +37,76 @@ describe User do
 		long_name_user = User.new(@attr.merge(:last_name => long_name))
 		long_name_user.should_not be_valid
 	end
-	
-	it "should accept valid email address" do
-	  addresses = %w[user@foo.com THE_USER@foo.bar.org first.last@foo.jp]
-		addresses.each do |address|
-			valid_email_user = User.new(@attr.merge(:email => address))
-			valid_email_user.should be_valid
+
+	describe "usernames" do
+		it "should require a username" do
+		  no_username_user = User.new(@attr.merge(:username => ""))
+		  no_username_user.should_not be_valid
 		end
-	end
-	
-	it "should reject invalid email address" do
-	  addresses = %w[user@foo,com THE_USER_at_oo.bar.org first.last@foo.]	  
-		addresses.each do |address|
-			invalid_email_user = User.new(@attr.merge(:email => address))
-			invalid_email_user.should_not be_valid
+
+		it "should reject short usernames" do
+		  short = "a" * 2
+			short_username = User.new(@attr.merge(:username => short))
+			short_username.should_not be_valid
 		end
+		
+		it "should reject long passwords" do
+		  long = "a" * 26
+			short_username = User.new(@attr.merge(:username => long))
+			short_username.should_not be_valid
+		end
+
+		it "should accept valid usernames" do
+		  usernames = %w[seth.messer seth_messer seth-messer s3thm3ss3r 5eth.me55er seth+messer seth.messer@example.com]
+			usernames.each do |username|
+				valid_username_user = User.new(@attr.merge(:username => username))
+				valid_username_user.should be_valid
+			end
+		end
+		
+		it "should reject invalid usernames" do
+		  usernames = %w[seth/\messer\ seth!messer "seth messer" <seth(messer)> \s3thmess?er]
+			usernames.each do |username|
+				valid_username_user = User.new(@attr.merge(:username => username))
+				valid_username_user.should_not be_valid
+			end
+		end	  
 	end
 	
-	it "should reject duplicate email addresses" do
-	  User.create!(@attr)
-		user_with_duplicate_email = User.new(@attr)
-		user_with_duplicate_email.should_not be_valid
-	end
-	
-	it "should reject email addresses identical up to case" do
-	  upcased_email = @attr[:email].upcase
-		User.create!(@attr.merge(:email => upcased_email))
-		user_with_duplicate_email = User.new(@attr)
-		user_with_duplicate_email.should_not be_valid
+	describe "email_addresses" do
+		it "should require an email address" do
+		  no_email_user = User.new(@attr.merge(:email => ""))
+			no_email_user.should_not be_valid
+		end
+
+	  it "should accept valid email address" do
+		  addresses = %w[user@foo.com THE_USER@foo.bar.org first.last@foo.jp]
+			addresses.each do |address|
+				valid_email_user = User.new(@attr.merge(:email => address))
+				valid_email_user.should be_valid
+			end
+		end
+		
+		it "should reject invalid email address" do
+		  addresses = %w[user@foo,com THE_USER_at_oo.bar.org first.last@foo.]	  
+			addresses.each do |address|
+				invalid_email_user = User.new(@attr.merge(:email => address))
+				invalid_email_user.should_not be_valid
+			end
+		end
+		
+		it "should reject duplicate email addresses" do
+		  User.create!(@attr)
+			user_with_duplicate_email = User.new(@attr)
+			user_with_duplicate_email.should_not be_valid
+		end
+		
+		it "should reject email addresses identical up to case" do
+		  upcased_email = @attr[:email].upcase
+			User.create!(@attr.merge(:email => upcased_email))
+			user_with_duplicate_email = User.new(@attr)
+			user_with_duplicate_email.should_not be_valid
+		end
 	end
 	
 	describe "passwords" do		

@@ -16,20 +16,24 @@
 
 class User < ActiveRecord::Base
 	attr_accessor		:password
-	attr_accessible :first_name, :last_name, :email, :password, :password_confirmation
+	attr_accessible :first_name, :last_name, :username, :email, :password, :password_confirmation
+
+	has_many :pack_lists
 	
 	email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+	username_regex = /^[\w+.\-_@]+$/i
 	
-	validates :first_name, :presence => true,
-									 :length => {:maximum => 50}
-	validates :last_name, :presence => true,
-									 :length => {:maximum => 50}									 
+	validates :first_name, :length => {:maximum => 50}
+	validates :last_name, :length => {:maximum => 50}
+	validates :username, :presence => true,
+	 									:length => {:within => 3..25},
+	 									:format => {:with => username_regex} 
 	validates :email, :presence => true,
 										:format => {:with => email_regex},
-										:uniqueness => {:case_sensitive => false} 
+										:uniqueness => {:case_sensitive => false}
 	validates :password, :presence => true,
-											 :confirmation => true,
-											 :length => {:within => 6..40} 
+										:confirmation => true,
+										:length => {:within => 6..40}
 
   before_save :encrypt_password
 
