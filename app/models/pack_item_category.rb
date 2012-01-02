@@ -11,4 +11,9 @@
 #
 
 class PackItemCategory < ActiveRecord::Base
+	belongs_to :pack_list
+
+	validates :title, :presence => true,
+								 	:length => {:maximum => 100},
+								 	:uniqueness => {:case_sensitive => false}
 end
