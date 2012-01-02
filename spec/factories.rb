@@ -23,7 +23,7 @@ Factory.define :pack_item do |pack_item|
 	pack_item.title									"Patagonia Capilene 3 Size M"
 	pack_item.notes									"Fits a bit snug, but provides decent warmth."
 	pack_item.quantity							1
-	pack_item.weight								6.89
+	pack_item.weight								6.275
 	pack_item.is_active							true
 	pack_item.is_used								true
 	pack_item.is_taken							true
